@@ -1,54 +1,42 @@
 package com.escuela.springboot.controller;
 
 import com.escuela.springboot.Dto.Cliente;
+import com.escuela.springboot.service.IClienteService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-@RestController //especificamos que publique los metodos de esta clase
+//especificamos que publique los metodos de esta clase
+// --> los controlladores no mucho codigo,
+//              solo se encargan de comunicar el proyecto con el cliente
+@RestController
 public class ClienteController {
-    private List<Cliente> clientes=new ArrayList<>();
+
+    //anotación que nos permite implementar, instancia o inyectar elementos de un bean
+    @Autowired
+    IClienteService iClienteService;
 
     @GetMapping("/listar")
     List<Cliente> listarCliente(){
-        return clientes;
+        return iClienteService.listarCliente();
     }
 
     @PostMapping("/registrar")
     Cliente registrarCliente(@RequestBody Cliente body){
-        Cliente clienteRegistrado=new Cliente(body.getId(), body.getNombres(), body.getSexo(), body.getTelefono());
-        clientes.add(clienteRegistrado);
-        return clienteRegistrado;
+        return iClienteService.registrarCliente(body);
     }
 
     @PutMapping("/actualizar/{id}")
     Cliente actualizar(@RequestBody Cliente body,@PathVariable("id") Long idCliente){
-        Optional<Cliente> encotrado=  clientes.stream().filter(cliente -> cliente.getId().equals(idCliente)).findFirst();
-        if (encotrado.isPresent()){
-            Cliente clienteActualizado=encotrado.get();
-            clienteActualizado.setNombres(body.getNombres());
-            clienteActualizado.setSexo(body.getSexo());
-            clienteActualizado.setTelefono(body.getTelefono());
-            clientes.forEach(cliente -> {
-                if (cliente.getId().equals(idCliente)){
-                    cliente = clienteActualizado;
-                }
-            });
-            return clienteActualizado;
-        }
-        return null;
+        return iClienteService.actualizar(body,idCliente);
     }
 
     @DeleteMapping("/eliminar/{id}")
     String eliminar(@PathVariable("id") Long idCliente){
-        Optional<Cliente> clienteEncontrado = clientes.stream().filter(cliente -> cliente.getId().equals(idCliente)).findFirst();
-        if (clienteEncontrado.isPresent()){
-            clientes.remove(clienteEncontrado.get());
-            return "Cliente Eliminado";
-        }
-        return "El cliente no esta Registrado";
+        return iClienteService.eliminar(idCliente);
     }
 
 }
