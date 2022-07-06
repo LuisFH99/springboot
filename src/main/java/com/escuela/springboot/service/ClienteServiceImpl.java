@@ -1,6 +1,8 @@
 package com.escuela.springboot.service;
 
 import com.escuela.springboot.Dto.Cliente;
+import com.escuela.springboot.repository.ClienteRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -11,44 +13,44 @@ import java.util.Optional;
 @Service
 public class ClienteServiceImpl implements IClienteService{
 
+    @Autowired
+    ClienteRepository clienteRepository;
+
     private List<Cliente> clientes = new ArrayList<>();
 
     @Override
     public List<Cliente> listarCliente() {
-        return clientes;
+        return clienteRepository.findAll();
     }
 
     @Override
     public Cliente registrarCliente(Cliente body) {
         Cliente clienteRegistrado=new Cliente(body.getId(), body.getNombres(), body.getSexo(), body.getTelefono());
-        clientes.add(clienteRegistrado);
+        clienteRepository.save(clienteRegistrado);
         return clienteRegistrado;
     }
 
     @Override
     public Cliente actualizar(Cliente body, Long idCliente) {
-        Optional<Cliente> encotrado=  clientes.stream().filter(cliente -> cliente.getId().equals(idCliente)).findFirst();
+
+        Optional<Cliente> encotrado=  clienteRepository.findById(idCliente);
         if (encotrado.isPresent()){
             Cliente clienteActualizado=encotrado.get();
             clienteActualizado.setNombres(body.getNombres());
             clienteActualizado.setSexo(body.getSexo());
             clienteActualizado.setTelefono(body.getTelefono());
-            clientes.forEach(cliente -> {
-                if (cliente.getId().equals(idCliente)){
-                    cliente = clienteActualizado;
-                }
-            });
-            return clienteActualizado;
+            return clienteRepository.save(clienteActualizado);
+
         }
         return null;
     }
 
     @Override
     public String eliminar(Long idCliente) {
-        Optional<Cliente> clienteEncontrado = clientes.stream().filter(cliente -> cliente.getId().equals(idCliente)).findFirst();
+        Optional<Cliente> clienteEncontrado = clienteRepository.findById(idCliente);
         if (clienteEncontrado.isPresent()){
-            clientes.remove(clienteEncontrado.get());
-            return "Cliente Eliminado";
+            clienteRepository.deleteById(idCliente);
+            return "Cliente Eliminado Correctamente";
         }
         return "El cliente no esta Registrado";
     }
