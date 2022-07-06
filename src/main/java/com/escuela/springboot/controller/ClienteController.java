@@ -21,7 +21,18 @@ public class ClienteController {
     List<Cliente> listarCliente(){
         return iClienteService.listarCliente();
     }
-
+    @GetMapping("/filtrar/nombre")
+    List<Cliente> filtrarClientesPorNombre(@RequestParam("texto") String texto){
+        return iClienteService.filtrarClientesPorNombre(texto);
+    }
+    @GetMapping("/listar/jpql")
+    List<Cliente> listarClienteJPQL(){
+        return iClienteService.listarClienteJPQL();
+    }
+    @GetMapping("/listar/sql")
+    List<Cliente> listarClienteSQL(){
+        return iClienteService.listarClienteSQL();
+    }
     @PostMapping("/registrar")
     Cliente registrarCliente(@RequestBody Cliente body){
         return iClienteService.registrarCliente(body);

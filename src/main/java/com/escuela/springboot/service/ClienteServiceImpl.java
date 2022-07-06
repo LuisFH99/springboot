@@ -24,6 +24,18 @@ public class ClienteServiceImpl implements IClienteService{
     }
 
     @Override
+    public List<Cliente> filtrarClientesPorNombre(String texto) {
+        return clienteRepository.findByNombresContaining(texto);
+    }
+
+    @Override
+    public List<Cliente> listarClienteJPQL() {
+        return clienteRepository.listarClienteJPQL();
+    }
+    public List<Cliente> listarClienteSQL() {
+        return clienteRepository.listarClienteSQL();
+    }
+    @Override
     public Cliente registrarCliente(Cliente body) {
         Cliente clienteRegistrado=new Cliente(body.getId(), body.getNombres(), body.getSexo(), body.getTelefono());
         clienteRepository.save(clienteRegistrado);

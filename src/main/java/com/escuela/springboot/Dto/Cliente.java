@@ -24,4 +24,9 @@ public class Cliente {
     private String sexo;
     @Transient
     private String telefono;
+
+    public Cliente(Long id,String nombres){
+        this.id=id;
+        this.nombres=nombres;
+    }
 }
